@@ -79,6 +79,6 @@ spec:
           - name: NUMCPU
             value: "14"
           - name: MEMORY_MB
-            value: "28"
+            value: "28672"
       nodeSelector:
         ngn2.nvidia.com/hosttype: "GS"
