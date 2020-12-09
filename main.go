@@ -16,8 +16,6 @@ const (
 	listenSocket = ":6666"
 
 	stressBinary          = "stress"
-	stressTimeout         = 60
-	stressIterations      = 5
 	stressDefaultMemoryMB = 256
 	stressMemoryHangSec   = 2
 )
@@ -55,6 +53,20 @@ func main() {
 		stressCPUForks, _ = strconv.Atoi(ncpu)
 	}
 
+	var stressIterations = 5
+
+	iterations := os.Getenv("ITERATIONS")
+	if iterations != "" {
+		stressIterations, _ = strconv.Atoi(iterations)
+	}
+
+	var stressTimeout = 60
+
+	timeout := os.Getenv("TIMEOUT")
+	if timeout != "" {
+		stressTimeout, _ = strconv.Atoi(timeout)
+	}
+
 	// The easiest way w/o tons of code and external modules to get system memory.
 	var totalSystemMemoryMB = C.sysconf(C._SC_PHYS_PAGES) * C.sysconf(C._SC_PAGE_SIZE) / 1024 / 1024
 
@@ -64,7 +76,7 @@ func main() {
 	memoryMB := os.Getenv("MEMORY_MB")
 	if memoryMB != "" {
 		memmb, _ := strconv.Atoi(memoryMB)
-		stressMemoryForks = C.long(memmb)
+		stressMemoryForks = C.long(memmb / stressDefaultMemoryMB)
 	}
 
 	args := []string{
@@ -80,7 +92,7 @@ func main() {
 
 		err := exec.Command(stressBinary, args...).Run()
 		if err != nil {
-			log.Printf("Command stress exited with: %s", err)
+			log.Printf("Error: Command stress exited with: %s", err)
 		}
 	}
 

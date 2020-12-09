@@ -76,6 +76,10 @@ spec:
         - name: kube-stresscheck
           image: docker.io/dyusupov/kube-stresscheck:latest
           env:
+          - name: ITERATIONS
+            value: "5"
+          - name: TIMEOUT
+            value: "60"
           - name: NUMCPU
             value: "14"
           - name: MEMORY_MB
